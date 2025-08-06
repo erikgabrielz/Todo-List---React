@@ -10,17 +10,30 @@ export default function Home() {
   const [list, setList] = useState<TodoItem[]>([]);
 
   const handleAddButton = () => {
+    if (itemInput.trim() === "") return;
     //cria um novo array, clona os dados já constantes e adiciona o novo item
     setList([
       //...list serve para copiar os dados já constantes no array
       ...list,
-      {label: itemInput, checked: false}
+      {id:list.length + 1, label: itemInput, checked: false}
     ])
     setItemInput("");
   }
 
-  const handleDeleteButton = () => {
+  const handleDeleteButton = (id: number) => {
+    setList(list.filter((item) => item.id !== id));
+  }
 
+  const toggleItem = (id: number) => {
+    const newList = [...list];
+
+    for(const i in newList){
+      if(newList[i].id === id){
+        newList[i].checked = !newList[i].checked;
+      }
+    }
+
+    setList(newList);
   }
 
   return (
@@ -42,9 +55,10 @@ export default function Home() {
 
         <ul className="w-full max-w-lg list-disc pl-5">
           {
-            list.map(item => (
-              // eslint-disable-next-line react/jsx-key
-              <li>{item.label} - <button className="hover:underline">[ deletar ]</button></li>
+            list.map((item) => (
+              <li key={item.id}>
+                <input onChange={() => toggleItem(item.id)} className="w-4 h-4 mr-3" type="checkbox" checked={item.checked} />
+                {item.label} - <button onClick={() => {handleDeleteButton(item.id)}} className="hover:underline">[ deletar ]</button></li>
             ))
           }
           
